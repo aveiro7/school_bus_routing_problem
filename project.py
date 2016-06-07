@@ -72,7 +72,7 @@ def routing_phase(stops_set, distances):
 		best_distance = None
 		for ant in range(K):
 			visited_stops = []
-			while len(visited_stops) < len(stops_set)
+			while len(visited_stops) < len(stops_set):
 				q = random.random()
 
 				if q <= q_0:
@@ -103,7 +103,7 @@ def routing_phase(stops_set, distances):
 
 
 def find_best_fitting(actual_bus, max_distance, max_load, distances_of_sets, loading_of_sets):
-	# znajduje autobus o największej liczbie dzieci, który dolaczony do aktualnego nie przekroczy limitow
+	# znajduje autobus o najwiekszej liczbie dzieci, ktory dolaczony do aktualnego nie przekroczy limitow
 
 	result = None
 	actual_load = loading_of_sets[actual_bus]
@@ -119,7 +119,7 @@ def find_best_fitting(actual_bus, max_distance, max_load, distances_of_sets, loa
 def find_solution(distances, students, max_load, max_distance):
 	# szkola to przystanek o indeksie 0
 
-	assert(students[0] == 0) # przy szkole nie ma uczniów
+	assert(students[0] == 0) # przy szkole nie ma uczniow
 
 	N = len(students) # liczba przystankow (razem ze szkola)
 	sets = [[i] for i in range(1, N)] # na poczatku kazdy autobus ma odwiedzic jeden przystanek
@@ -149,19 +149,48 @@ def find_solution(distances, students, max_load, max_distance):
 	return actual_bus
 
 
+def read_data(filename):
+	# plik powinien byc w formacie:
+	# maksymalne obciazenie autobusow
+	# maksymalna przejechana droga
+	# liczba przystankow (maksymalny numer przystanku)
+	# odleglosci (w itej linijce sa odleglosci i-tego przystanku od pozostalych)
+	# oblozenia przystankow
+	f = open(filename, 'r')
+	max_load = int(f.readline()[:-1])
+	print max_load
+	max_distance = int(f.readline()[:-1])
+	print max_distance
+
+	N = int(f.readline()[:-1])
+	print N
+
+	distances = []
+
+	for i in range(N + 1):
+		line = f.readline()[:-1]
+		data = [float(x) for x in line.split()]
+		distances.append(data)
+
+	line = f.readline()[:-1]
+	students = [int(x) for x in line.split()]
+
+	
+	for line in distances:
+		print line
+
+	print students
+
+	return distances, students, max_load, max_distance
+
+
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
 		print "Please provide the filename of the data file"
 		print "in format", sys.argv[0], "filename"
-		return
+		exit()
 
 	filename = sys.argv[1]
 
-	# read data from the file
-
 	distances, students, max_load, max_distance = read_data(filename)
-	print find_solution(distances, students, max_load, max_distance)
-
-
-
-
+	# print find_solution(distances, students, max_load, max_distance)
