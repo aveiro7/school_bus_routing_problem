@@ -4,24 +4,56 @@ import sys
 
 def diversification(visited_stops, stops_set, thau, eta, beta):
 	result = None
+	best_value = -1
+	actual = visited_stops[-1]
+
+	for stop in stops_set:
+		if stop not in visited_stops:
+			value = thau[actual][stop] * (eta[actual][stop] ** beta)
+
+			if value > best_value:
+				result = stop
+				best_value = value
 
 	assert(result is not None)
 	return result
 
 
 def distraction(visited_stops, stops_set, thau, eta, beta):
-	result = None
+	actual = visited_stops[-1]
 
-	assert(result is not None)
-	return result
+	possible_results = [x for x in stops_set if x not in visited_stops]
+
+	sum_values = sum([thau[actual][x] * (eta[actual][x] ** beta) for x in possible_results])
+
+	threshold = random.random()
+	threshold *= sum_values
+	value = 0
+
+	assert(possible_results)
+
+	for stop in possible_results:
+		value += thau[actual][stop] * (eta[actual][stop] ** beta)
+		if value >= threshold:
+			return stop
+
+	return possible_results[-1]
 
 
-def update_pheromones_locally(thau, rho, thau_0):
-	return None
+def update_pheromones_locally(thau, rho, thau_0, visited_stops):
+	for i in range(len(visited_stops) - 1):
+		a = visited_stops[i]
+		b = visited_stops[i + 1]
+		old_value = thau[a][b]
+		thau[a][b] = old_value * (1.0 - rho) + rho * thau_0
 
 
-def update_pheromones_globally(thau, rho, best_distance):
-	return None
+def update_pheromones_globally(thau, rho, best_distance, stops_set):
+	for start in stops_set:
+		for stop in stops_set:
+			if start != stop:
+				old_value = thau[start][stop]
+				thau[start][stop] = old_value * (1.0 - rho) + rho * (1.0 / best_distance)
 
 
 def routing_phase(stops_set, distances):
@@ -41,7 +73,7 @@ def routing_phase(stops_set, distances):
 		for ant in range(K):
 			visited_stops = []
 			while len(visited_stops) < len(stops_set)
-				q = random.rand()
+				q = random.random()
 
 				if q <= q_0:
 					next_stop = diversification(visited_stops, stops_set, thau, eta, beta) # equation 6
@@ -51,7 +83,7 @@ def routing_phase(stops_set, distances):
 				visited_stops.append(next_stop)
 
 			
-			update_pheromones_locally(thau, rho, thau_0) # equation 8
+			update_pheromones_locally(thau, rho, thau_0, visited_stops) # equation 8
 
 			distance = 0
 			distance += distances[0][visited_stops[0]] # ze szkoly do pierwszego
@@ -63,7 +95,7 @@ def routing_phase(stops_set, distances):
 			if best_distance is None or distance < best_distance:
 				best_distance = distance
 
-		update_pheromones_globally(thau, rho, best_distance)
+		update_pheromones_globally(thau, rho, best_distance, stops_set)
 		if best_of_all is None or best_distance < best_of_all:
 			best_of_all = best_distance
 
