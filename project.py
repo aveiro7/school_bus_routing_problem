@@ -1,6 +1,29 @@
 import random
 import sys
 
+
+def diversification(visited_stops, stops_set, thau, eta, beta):
+	result = None
+
+	assert(result is not None)
+	return result
+
+
+def distraction(visited_stops, stops_set, thau, eta, beta):
+	result = None
+
+	assert(result is not None)
+	return result
+
+
+def update_pheromones_locally(thau, rho, thau_0):
+	return None
+
+
+def update_pheromones_globally(thau, rho, best_distance):
+	return None
+
+
 def routing_phase(stops_set, distances):
 	K = 100
 	I = 20
@@ -21,9 +44,9 @@ def routing_phase(stops_set, distances):
 				q = random.rand()
 
 				if q <= q_0:
-					next_stop = diversification(visited_stops) # equation 6
+					next_stop = diversification(visited_stops, stops_set, thau, eta, beta) # equation 6
 				else:
-					next_stop = distraction(visited_stops) # equation 7
+					next_stop = distraction(visited_stops, stops_set, thau, eta, beta) # equation 7
 
 				visited_stops.append(next_stop)
 
@@ -47,27 +70,19 @@ def routing_phase(stops_set, distances):
 	return best_of_all
 
 
-def diversification(visited_stops):
-	return 0
-
-
-def distraction(visited_stops):
-	return 0
-
-
-def update_pheromones_locally(thau, rho, thau_0):
-	return None
-
-def update_pheromones_globally(thau, rho, best_distance):
-	return None
-
-
 def find_best_fitting(actual_bus, max_distance, max_load, distances_of_sets, loading_of_sets):
-	# znajdz autobus (set), ktory jest po actual_bus
-	# i razem z actual_bus nie przekracza max_distance oraz max_load
-	# i jest najlepiej pasujacym (zabiera maksymalnie duzo dzieci)
-	# jesli taki nie istnieje, zwroc None
-	return None
+	# znajduje autobus o największej liczbie dzieci, który dolaczony do aktualnego nie przekroczy limitow
+
+	result = None
+	actual_load = loading_of_sets[actual_bus]
+	actual_distance = distances_of_sets[actual_bus]
+
+	for index in range(actual_bus + 1, len(distances_of_sets)):
+		if actual_distance + distances_of_sets[index] <= max_distance and actual_load + loading_of_sets[index] <= max_load:
+			if result is None or loading_of_sets[result] < loading_of_sets[index]:
+				result = index
+
+	return result
 
 def find_solution(distances, students, max_load, max_distance):
 	# szkola to przystanek o indeksie 0
