@@ -64,14 +64,14 @@ def routing_phase(stops_set, distances):
 	rho = 0.1
 	thau_0 = 0.2
 
-	eta = [[1.0 / d for d in x] for x in distances]
+	eta = [[1.0 / d if d != 0 else 0 for d in x] for x in distances]
 	thau = [[thau_0 for d in x] for x in distances]
 
 	best_of_all = None
 	for cycle in range(I):
 		best_distance = None
 		for ant in range(K):
-			visited_stops = []
+			visited_stops = [0]
 			while len(visited_stops) < len(stops_set):
 				q = random.random()
 
@@ -146,7 +146,8 @@ def find_solution(distances, students, max_load, max_distance):
 			loading_of_sets[actual_bus] += loading_of_sets[bus_to_add]
 			del loading_of_sets[bus_to_add]
 
-	return actual_bus
+	print sets # lista przystankow odwiedzonych przez poszczegolne autobusy
+	return len(sets)
 
 
 def read_data(filename):
@@ -158,12 +159,9 @@ def read_data(filename):
 	# oblozenia przystankow
 	f = open(filename, 'r')
 	max_load = int(f.readline()[:-1])
-	print max_load
 	max_distance = int(f.readline()[:-1])
-	print max_distance
 
 	N = int(f.readline()[:-1])
-	print N
 
 	distances = []
 
@@ -174,12 +172,6 @@ def read_data(filename):
 
 	line = f.readline()[:-1]
 	students = [int(x) for x in line.split()]
-
-	
-	for line in distances:
-		print line
-
-	print students
 
 	return distances, students, max_load, max_distance
 
@@ -193,4 +185,4 @@ if __name__ == "__main__":
 	filename = sys.argv[1]
 
 	distances, students, max_load, max_distance = read_data(filename)
-	# print find_solution(distances, students, max_load, max_distance)
+	print find_solution(distances, students, max_load, max_distance)
